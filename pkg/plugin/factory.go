@@ -6,6 +6,7 @@ import (
 
 	"github.com/coldzerofear/vgpu-manager/cmd/scheduler/options"
 	"k8s.io/apimachinery/pkg/runtime"
+	v1 "k8s.io/client-go/listers/core/v1"
 	"k8s.io/component-base/featuregate"
 	baseversion "k8s.io/component-base/version"
 	"k8s.io/kubernetes/pkg/scheduler/framework"
@@ -26,13 +27,18 @@ func New(ctx context.Context, obj runtime.Object, handle framework.Handle) (fram
 	if err != nil {
 		return nil, err
 	}
-	return &VGPUSchedulerPlugin{handle: handle}, nil
+	podLister := handle.SharedInformerFactory().Core().V1().Pods().Lister()
+	return &VGPUSchedulerPlugin{
+		handle:    handle,
+		podlister: podLister,
+	}, nil
 }
 
 type VGPUSchedulerPlugin struct {
 	mu        sync.Mutex
 	timestamp int64
 	handle    framework.Handle
+	podlister v1.PodLister
 }
 
 func (p *VGPUSchedulerPlugin) Name() string {

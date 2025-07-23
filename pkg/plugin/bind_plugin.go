@@ -53,9 +53,10 @@ func (p *VGPUSchedulerPlugin) Bind(ctx context.Context, state *framework.CycleSt
 		}
 		preAllocate := data.(preAllocateDevice)
 		predicateTime := fmt.Sprintf("%d", metav1.NowMicro().UnixNano())
-		patchData.Labels[util.PodAssignedPhaseLabel] = string(util.AssignPhaseSucceed)
+		patchData.Labels[util.PodAssignedPhaseLabel] = string(util.AssignPhaseAllocating)
 		patchData.Annotations[util.PodPredicateNodeAnnotation] = nodeName
 		patchData.Annotations[util.PodVGPUPreAllocAnnotation] = string(preAllocate)
+		patchData.Annotations[util.PodVGPURealAllocAnnotation] = ""
 		patchData.Annotations[util.PodPredicateTimeAnnotation] = predicateTime
 	}
 

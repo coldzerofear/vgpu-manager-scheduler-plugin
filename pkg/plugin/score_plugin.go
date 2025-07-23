@@ -14,9 +14,9 @@ import (
 
 var _ framework.ScorePlugin = &VGPUSchedulerPlugin{}
 
-func (p *VGPUSchedulerPlugin) Score(ctx context.Context, state *framework.CycleState, pod *v1.Pod, nodeName string) (int64, *framework.Status) {
+func (p *VGPUSchedulerPlugin) Score(ctx context.Context, state *framework.CycleState, pod *v1.Pod, nodeName string) (score int64, status *framework.Status) {
 	logger := klog.FromContext(ctx)
-	score := framework.MinNodeScore
+	score = framework.MinNodeScore
 	if !p.isVGPUResourcePod(state, pod) {
 		logger.Info("pod did not request vGPU, skipping node Score", "pod", klog.KObj(pod), "plugin", "Score")
 		return score, framework.NewStatus(framework.Success, "")
